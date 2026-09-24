@@ -53,8 +53,10 @@ can install and manage it for you.
 ## Using it
 
 Open `http://<the-host's-mesh-ip>:28088/` from any device on the same tetron
-network. The board is a single chat-style page: post text or an image, click
-the three-dot menu on a post to delete it. It polls every 10 seconds. It
+network. The board is a single chat-style page: post text or an image
+(attach with the paperclip, drag-and-drop an image anywhere on the page, or
+paste one from the clipboard), click the three-dot menu on a post to delete
+it. It polls every 10 seconds. It
 reuses tetron-webui's design tokens and dark/light theming, so it looks like
 another panel of the same app.
 

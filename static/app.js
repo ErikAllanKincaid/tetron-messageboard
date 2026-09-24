@@ -249,17 +249,61 @@ input.addEventListener("input", () => { autosize(); refreshSend(); });
 input.addEventListener("keydown", (e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); send(); } });
 
 $("attachBtn").addEventListener("click", () => fileInput.click());
-fileInput.addEventListener("change", () => {
-  const f = fileInput.files && fileInput.files[0];
+fileInput.addEventListener("change", () => acceptFile(fileInput.files && fileInput.files[0]));
+$("attachRemove").addEventListener("click", clearAttach);
+
+// Shared entry point for every way an image can arrive: the picker, a
+// drag-and-drop, or a paste. Validates type + size (the server only accepts
+// images, and enforces the size cap itself) before staging it.
+function acceptFile(f) {
   if (!f) return;
+  if (!/^image\//.test(f.type)) {
+    showError("Only image attachments are supported.");
+    fileInput.value = "";
+    return;
+  }
   if (f.size > maxAttachBytes) {
     showError("That image is " + fmtBytes(f.size) + "; the limit is " + fmtBytes(maxAttachBytes) + ".");
-    fileInput.value = ""; return;
+    fileInput.value = "";
+    return;
   }
   clearError();
   setAttach(f);
+}
+
+// Drag-and-drop anywhere on the page, plus paste-to-attach. The overlay is
+// only shown while files are being dragged (a dragged selection or link has
+// no "Files" type), and a depth counter avoids flicker as the pointer moves
+// over child elements.
+const dropzone = $("dropzone");
+let dragDepth = 0;
+function dragHasFiles(e) {
+  return Array.prototype.includes.call(e.dataTransfer ? e.dataTransfer.types : [], "Files");
+}
+window.addEventListener("dragenter", (e) => {
+  if (!dragHasFiles(e)) return;
+  e.preventDefault();
+  dragDepth++;
+  dropzone.classList.add("show");
 });
-$("attachRemove").addEventListener("click", clearAttach);
+window.addEventListener("dragover", (e) => { if (dragHasFiles(e)) e.preventDefault(); });
+window.addEventListener("dragleave", (e) => {
+  if (!dragHasFiles(e)) return;
+  dragDepth = Math.max(0, dragDepth - 1);
+  if (dragDepth === 0) dropzone.classList.remove("show");
+});
+window.addEventListener("drop", (e) => {
+  if (!dragHasFiles(e)) return;
+  e.preventDefault();
+  dragDepth = 0;
+  dropzone.classList.remove("show");
+  acceptFile(e.dataTransfer.files && e.dataTransfer.files[0]);
+});
+window.addEventListener("paste", (e) => {
+  const items = (e.clipboardData && e.clipboardData.items) || [];
+  const img = Array.prototype.find.call(items, (i) => i.type.startsWith("image/"));
+  if (img) acceptFile(img.getAsFile());
+});
 
 function setAttach(f) {
   clearAttach();

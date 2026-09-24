@@ -313,6 +313,23 @@ footer {
 }
 #lightbox img { max-width: 100%; max-height: 100%; border-radius: 6px; }
 
+/* --- Drag-and-drop overlay ------------------------------------------- */
+/* Hidden by default (display:none), shown via .show while an image file is
+   being dragged over the page. pointer-events:none so it never intercepts
+   the drop/dragleave events the window listeners handle. */
+#dropzone {
+  position: fixed; inset: 0; z-index: 60;
+  display: none; place-items: center;
+  background: color-mix(in srgb, var(--accent) 14%, rgba(0,0,0,0.45));
+  pointer-events: none;
+}
+#dropzone.show { display: grid; }
+#dropzone .dz-inner {
+  border: 2px dashed var(--accent); border-radius: 12px;
+  padding: 26px 40px; font-size: 16px; font-weight: 600; color: #fff;
+  background: rgba(0,0,0,0.4);
+}
+
 @media (max-width: 480px) {
   .storage { display: none; }
   .brand-sub { display: none; }
