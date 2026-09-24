@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.tetron.messageboard</string>
+    <key>ProgramArguments</key>
+    <array>
+        <string>/usr/local/bin/tetron-messageboard</string>
+        <string>run</string>
+    </array>
+    <key>EnvironmentVariables</key>
+    <dict>
+        <key>TETRON_MESSAGEBOARD_PORT</key>
+        <string>__TETRON_MESSAGEBOARD_PORT__</string>
+        <key>TETRON_MESSAGEBOARD_NETWORK</key>
+        <string>__TETRON_MESSAGEBOARD_NETWORK__</string>
+    </dict>
+    <key>RunAtLoad</key>
+    <true/>
+    <key>KeepAlive</key>
+    <true/>
+    <key>StandardOutPath</key>
+    <string>/tmp/tetron-messageboard.log</string>
+    <key>StandardErrorPath</key>
+    <string>/tmp/tetron-messageboard.log</string>
+</dict>
+</plist>

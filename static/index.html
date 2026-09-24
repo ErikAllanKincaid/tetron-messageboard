@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Message Board</title>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <div id="app">
+    <header>
+      <div class="brand">
+        <div class="brand-mark">T</div>
+        <div class="brand-text">
+          <div class="brand-title">Message Board</div>
+          <div class="brand-sub" id="hostLabel">connecting…</div>
+        </div>
+      </div>
+      <span class="net-chip" id="netChip">…</span>
+      <div class="spacer"></div>
+      <div class="storage" title="Attachment storage used">
+        <div class="storage-label"><span>Storage</span><span id="storeText">—</span></div>
+        <div class="storage-bar"><div class="storage-fill" id="storeFill"></div></div>
+      </div>
+      <button class="icon-btn" id="themeToggle" title="Toggle light / dark">◐</button>
+    </header>
+
+    <div id="feed" hidden></div>
+
+    <div id="empty">
+      <div class="big">✉</div>
+      <h2 id="emptyTitle">Loading…</h2>
+      <p id="emptyText">Reaching the board over the mesh.</p>
+    </div>
+
+    <footer>
+      <div class="post-error" id="postError" hidden></div>
+      <div class="attach-preview" id="attachPreview" hidden>
+        <img id="attachThumb" alt="">
+        <div class="an">
+          <div class="fn" id="attachName"></div>
+          <div class="muted" id="attachMeta"></div>
+        </div>
+        <button class="rm" id="attachRemove" title="Remove attachment" aria-label="Remove attachment">✕</button>
+      </div>
+      <div class="composer">
+        <input type="file" id="fileInput" accept="image/png,image/jpeg,image/webp,image/gif" hidden>
+        <button class="icon-btn" id="attachBtn" title="Attach an image">📎</button>
+        <textarea id="input" rows="1" placeholder="Message the mesh…"></textarea>
+        <button class="send-btn" id="sendBtn" disabled>Send</button>
+      </div>
+      <div class="exif-note">
+        <span class="warn-dot">⚠</span>
+        <span>Photos can carry location data (EXIF). Anything you post is visible to every device on the mesh.</span>
+      </div>
+    </footer>
+  </div>
+
+  <div id="lightbox" hidden><img id="lightboxImg" alt=""></div>
+
+  <script src="/app.js"></script>
+</body>
+</html>
