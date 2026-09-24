@@ -174,6 +174,11 @@ function buildMenu(m) {
     wrap.classList.add("open");
     const pop = document.createElement("div");
     pop.className = "menu-pop";
+    // Keep clicks inside the popup from bubbling to the document-level
+    // closeMenus, which would tear the popup down before the "Delete message"
+    // handler could swap in the confirm step. Cancel/Delete close it
+    // explicitly instead.
+    pop.addEventListener("click", (e) => e.stopPropagation());
     pop.innerHTML = `<button class="danger" data-act="del">Delete message</button>`;
     pop.querySelector("[data-act=del]").addEventListener("click", () => {
       pop.innerHTML = `<div class="confirm-row"><p>Delete this message for everyone on the mesh?</p>`
