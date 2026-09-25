@@ -1,0 +1,13 @@
+[Unit]
+Description=tetron-messageboard mesh-hosted message board (%i)
+After=network-online.target
+
+[Service]
+Type=simple
+ExecStart=/usr/local/bin/tetron-messageboard run
+EnvironmentFile=%h/.config/tetron-messageboard/%i.env
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=default.target

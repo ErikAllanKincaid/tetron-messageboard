@@ -45,8 +45,10 @@ struct Cli {
 
 #[derive(Subcommand)]
 enum Command {
-    /// Install and start the per-user service (systemd --user on Linux, a
-    /// launchd LaunchAgent on macOS), bound to one tetron network
+    /// Install and start a per-user board service (systemd --user on Linux, a
+    /// launchd LaunchAgent on macOS) for one tetron network. Run it once per
+    /// network to serve several boards at once (each binds that network's own
+    /// mesh IP, so they share the default port without conflict).
     Install {
         /// Port to bind on the mesh interface
         #[arg(short = 'p', long, env = "TETRON_MESSAGEBOARD_PORT", default_value_t = config::DEFAULT_PORT)]
@@ -56,8 +58,24 @@ enum Command {
         #[arg(long, env = "TETRON_MESSAGEBOARD_NETWORK", default_value = "")]
         network: String,
     },
-    /// Stop and remove the per-user service
-    Uninstall,
+    /// Stop and remove one board's per-user service. With several boards
+    /// installed, `--network` (or `--all`) is required.
+    Uninstall {
+        /// Which network's board to remove.
+        #[arg(long)]
+        network: Option<String>,
+        /// Remove every installed board on this node.
+        #[arg(long)]
+        all: bool,
+    },
+    /// List the boards installed on this node and whether each is running.
+    List {
+        /// Emit JSON (for tetron-webui and scripts).
+        #[arg(long)]
+        json: bool,
+    },
+    /// Restart every installed board (picks up a freshly upgraded binary).
+    RestartAll,
     /// Print the tetron-messageboard version
     #[command(visible_alias = "ver")]
     Version,
@@ -92,7 +110,9 @@ async fn main() -> anyhow::Result<()> {
     let cli = Cli::parse();
     match cli.command {
         Some(Command::Install { port, network }) => install(port, network).await,
-        Some(Command::Uninstall) => service::uninstall(),
+        Some(Command::Uninstall { network, all }) => service::uninstall_cli(network.as_deref(), all),
+        Some(Command::List { json }) => service::list_cmd(json),
+        Some(Command::RestartAll) => service::restart_all(),
         Some(Command::Version) => {
             println!("tetron-messageboard {FULL_VERSION}");
             Ok(())
@@ -109,10 +129,13 @@ async fn install(port: u16, network: String) -> anyhow::Result<()> {
     let net = roster::select_network(&network).await?;
     let concrete = net.network.clone();
     let by_coord = net.role.is_coordinator();
-    config::save_install_state(&config::InstallState {
-        network: concrete.clone(),
-        installed_by_coordinator: by_coord,
-    })?;
+    // Move any legacy single-board data into this network's own dir before we
+    // point the service at it, so an existing install keeps its messages.
+    config::migrate_legacy_into(&concrete)?;
+    config::save_install_state(
+        &concrete,
+        &config::InstallState { network: concrete.clone(), installed_by_coordinator: by_coord },
+    )?;
     if !by_coord {
         eprintln!(
             "note: this node is not a coordinator of '{concrete}', so the board runs and is \
@@ -124,14 +147,13 @@ async fn install(port: u16, network: String) -> anyhow::Result<()> {
 
 async fn run() -> anyhow::Result<()> {
     let cfg = config::Config::from_env();
-    let state = config::load_install_state()?;
-    // Network precedence: the concrete name pinned at install, else the env
-    // override, else "" (auto-select the sole network).
-    let network = if !state.network.is_empty() {
-        state.network.clone()
-    } else {
-        config::network_from_env().unwrap_or_default()
-    };
+    // The instance key is the pinned network from the env (each templated
+    // unit sets it); empty means the legacy single-board unit, whose data and
+    // state live at the base dir. Everything keys on this one value so a
+    // legacy board keeps reading its existing data after an upgrade.
+    let key = config::network_from_env().unwrap_or_default();
+    let state = config::load_install_state(&key)?;
+    let network = if !key.is_empty() { key.clone() } else { state.network.clone() };
 
     // Wait for the daemon to be reachable and the network present -- on boot
     // the board's service may start before tetron has brought its TUN up.
@@ -147,7 +169,7 @@ async fn run() -> anyhow::Result<()> {
     let network_name = initial.network.clone();
     let my_ip = initial.my_ip.expect("snapshot always sets my_ip");
 
-    let store = store::Store::load()?;
+    let store = store::Store::load(&key)?;
     let app_state = AppState {
         store: Arc::new(Mutex::new(store)),
         limiter: Arc::new(Mutex::new(ratelimit::RateLimiter::default())),
