@@ -81,9 +81,9 @@ impl Store {
     /// Load the log from disk (empty on first run). Malformed lines are
     /// skipped with a warning rather than failing the whole service -- one
     /// corrupt line should not take the board down.
-    pub fn load() -> Result<Store> {
-        let path = config::messages_path()?;
-        let attach_dir = config::attachments_dir()?;
+    pub fn load(key: &str) -> Result<Store> {
+        let path = config::messages_path(key)?;
+        let attach_dir = config::attachments_dir(key)?;
         let mut messages = Vec::new();
         if path.exists() {
             let raw = std::fs::read_to_string(&path)
