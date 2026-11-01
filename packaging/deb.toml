@@ -1,0 +1,30 @@
+# Package description for mkdeb (https://github.com/ErikAllanKincaid/tetron-packaging).
+# Built in release CI by the build-deb action. Paths are relative to this file.
+#
+# Only the binary: `tetron-messageboard install`, run as the user, registers the service
+# with the binary's own path, as it does for a downloaded binary.
+name = "tetron-messageboard"
+description = "Message board hosted on a tetron mesh network"
+long_description = """
+A message board for a tetron network: anyone admitted to the mesh can read
+and post, and no one outside it can reach it. Needs the tetron daemon
+installed and running on the same host.
+
+Run `tetron-messageboard install` as your user to host a board for a network
+(a systemd user service per network), or manage boards from tetron-webui."""
+section = "net"
+license = "MPL-2.0"
+homepage = "https://github.com/ErikAllanKincaid/tetron-messageboard"
+# tetron-messageboard X.Y.z targets tetron core X.Y, so recommend that minor only.
+recommends = ["tetron (>= {minor}), tetron (<< {next_minor})"]
+smoke = "tetron-messageboard --version"
+
+[[files]]
+src = "binary"
+dst = "usr/bin/tetron-messageboard"
+mode = "0755"
+
+[[files]]
+src = "../README.md"
+dst = "usr/share/doc/tetron-messageboard/README.md"
+mode = "0644"

@@ -78,9 +78,11 @@ jobs:
           - target: x86_64-unknown-linux-gnu
             runner: ubuntu-22.04
             name: tetron-messageboard-linux-x86_64
+            deb_arch: amd64
           - target: aarch64-unknown-linux-gnu
             runner: ubuntu-22.04-arm
             name: tetron-messageboard-linux-aarch64
+            deb_arch: arm64
           - target: aarch64-apple-darwin
             runner: macos-latest
             name: tetron-messageboard-macos-aarch64
@@ -129,3 +131,32 @@ jobs:
           files: |
             ${{ matrix.name }}
             ${{ matrix.name }}.sha256
+
+      # .deb for Debian and Ubuntu, built from the exact binary uploaded above by
+      # the shared build-deb action, pinned to a full commit SHA. The action
+      # installs the deb in a clean debian:trixie container and fails the job
+      # before the upload if that test fails; the test runs only on the
+      # runner's own architecture. Maintainer comes from the repository
+      # variable DEB_MAINTAINER.
+      - name: Build .deb
+        id: deb
+        if: matrix.deb_arch != ''
+        uses: ErikAllanKincaid/tetron-packaging@87d8405791a0e679af6deb720fe932410f38feb5
+        with:
+          binary: ${{ matrix.name }}
+          deb-toml: packaging/deb.toml
+          version: ${{ needs.create-release.outputs.tag }}
+          arch: ${{ matrix.deb_arch }}
+          maintainer: ${{ vars.DEB_MAINTAINER }}
+          smoke: tetron-messageboard --version
+
+      - name: Upload .deb assets
+        if: matrix.deb_arch != ''
+        uses: softprops/action-gh-release@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ needs.create-release.outputs.tag }}
+          files: |
+            ${{ steps.deb.outputs.deb }}
+            ${{ steps.deb.outputs.sha256 }}

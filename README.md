@@ -31,9 +31,12 @@ already an admitted peer. There is no separate auth layer.
 
 ## Install
 
-Grab the release binary for your platform from the
-[Releases](https://github.com/ErikAllanKincaid/tetron-messageboard/releases) page,
-put it on `PATH` (e.g. `/usr/local/bin/tetron-messageboard`), then:
+On Debian and Ubuntu (amd64, arm64), install the release `.deb` with apt
+(`sudo apt install ./tetron-messageboard_<version>_amd64.deb`), which puts the
+binary in `/usr/bin` and lets apt upgrade and remove it. Elsewhere, grab the
+release binary for your platform from the
+[Releases](https://github.com/ErikAllanKincaid/tetron-messageboard/releases) page
+and put it on `PATH` (e.g. `/usr/local/bin/tetron-messageboard`). Then:
 
 ```bash
 tetron-messageboard install                 # sole-network hosts: nothing else needed
