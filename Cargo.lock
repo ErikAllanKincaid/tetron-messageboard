@@ -3080,7 +3080,7 @@ dependencies = [
 
 [[package]]
 name = "tetron-messageboard"
-version = "0.14.1"
+version = "0.15.0"
 dependencies = [
  "anyhow",
  "axum",
@@ -3095,8 +3095,8 @@ dependencies = [
 
 [[package]]
 name = "tetron-proto"
-version = "0.14.0"
-source = "git+https://github.com/ErikAllanKincaid/tetron#631a748c9bed28307a2e2f67e1b1b4f29548078d"
+version = "0.15.0"
+source = "git+https://github.com/ErikAllanKincaid/tetron#e2ddbed60920cef54b08bf72b8973348169bb2df"
 dependencies = [
  "anyhow",
  "blake3",
