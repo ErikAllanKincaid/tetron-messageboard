@@ -141,7 +141,7 @@ jobs:
       - name: Build .deb
         id: deb
         if: matrix.deb_arch != ''
-        uses: ErikAllanKincaid/tetron-packaging@87d8405791a0e679af6deb720fe932410f38feb5
+        uses: tetronos/tetron-packaging@87d8405791a0e679af6deb720fe932410f38feb5
         with:
           binary: ${{ matrix.name }}
           deb-toml: packaging/deb.toml
