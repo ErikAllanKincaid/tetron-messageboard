@@ -1,14 +1,14 @@
 # tetron-messageboard
 
-A mesh-hosted message board for one [tetron](https://github.com/ErikAllanKincaid/tetron)
+A mesh-hosted message board for one [tetron](https://github.com/tetronos/tetron)
 network. One member runs it; everyone else on that tetron network can read
 and post messages and images from their browser. Common-channel
 communication scoped to the mesh, with no accounts and no login.
 
 It is a genuinely separate, opt-in addon in the same family as
-[tetron-relay](https://github.com/ErikAllanKincaid/tetron-relay),
-[tetron-sync-receiver](https://github.com/ErikAllanKincaid/tetron-sync-receiver)
-and [tetron-webui](https://github.com/ErikAllanKincaid/tetron-webui). It
+[tetron-relay](https://github.com/tetronos/tetron-relay),
+[tetron-sync-receiver](https://github.com/tetronos/tetron-sync-receiver)
+and [tetron-webui](https://github.com/tetronos/tetron-webui). It
 makes **zero changes to tetron core** and talks to the local daemon only
 over the existing IPC socket (via `tetron-proto`).
 
@@ -35,7 +35,7 @@ On Debian and Ubuntu (amd64, arm64), install the release `.deb` with apt
 (`sudo apt install ./tetron-messageboard_<version>_amd64.deb`), which puts the
 binary in `/usr/bin` and lets apt upgrade and remove it. Elsewhere, grab the
 release binary for your platform from the
-[Releases](https://github.com/ErikAllanKincaid/tetron-messageboard/releases) page
+[Releases](https://github.com/tetronos/tetron-messageboard/releases) page
 and put it on `PATH` (e.g. `/usr/local/bin/tetron-messageboard`). Then:
 
 ```bash
@@ -50,7 +50,7 @@ it to come up. `tetron-messageboard uninstall` removes it.
 
 Placing the binary in root-owned `/usr/local/bin` needs `sudo`; running the
 board does not. The
-[tetron-webui](https://github.com/ErikAllanKincaid/tetron-webui) Add-ons panel
+[tetron-webui](https://github.com/tetronos/tetron-webui) Add-ons panel
 can install and manage it for you.
 
 ## Using it

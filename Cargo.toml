@@ -5,7 +5,7 @@ edition = "2024"
 rust-version = "1.91"
 license = "MPL-2.0"
 description = "Mesh-hosted message board for a tetron network -- anyone admitted to the mesh can read and post"
-repository = "https://github.com/ErikAllanKincaid/tetron-messageboard"
+repository = "https://github.com/tetronos/tetron-messageboard"
 authors = ["Dario", "ErikAllanKincaid"]
 
 [[bin]]
@@ -20,7 +20,7 @@ path = "src/main.rs"
 # exactly that reason. Used here only to read the local daemon's peer roster
 # over the IPC socket (identity resolution + the network's own mesh IP to
 # bind on) -- the same technique tetron-sync-receiver's roster.rs uses.
-tetron-proto = { git = "https://github.com/ErikAllanKincaid/tetron" }
+tetron-proto = { git = "https://github.com/tetronos/tetron" }
 # `multipart` for attachment uploads; `fs` for streaming attachment reads.
 axum = { version = "0.8", features = ["multipart"] }
 tokio = { version = "1", features = ["rt-multi-thread", "macros", "process", "fs", "sync"] }
